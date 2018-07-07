@@ -69,14 +69,30 @@ module Sengiri
 
         def dbconfs
           if defined? Rails
-            @dbconfs ||= Rails.application.config.database_configuration.select {|name|
-              /^#{@sharding_group_name}/ =~ name
-            }.select {|name|
-              /#{env}#{@sharding_database_suffix}$/ =~ name
-            }
-
+            @dbconfs ||= rails_db_confs
           end
           @dbconfs
+        end
+
+        def rails_db_confs
+          confs = Rails.application.config.database_configuration.select {|name|
+            /^#{@sharding_group_name}/ =~ name
+          }
+
+          confs_with_env = confs.select {|name|
+            /#{env}#{@sharding_database_suffix}$/ =~ name
+          }
+
+          if confs.present? && confs_with_env.blank?
+            database_names = confs.map { |name,_| "#{name}_#{env}#{@sharding_database_suffix}" }.join(' , ')
+            raise <<~EOM
+              Not found database settings with env. 
+              You need specify database names with env ( e.g #{database_names} )"
+              Or set empty value on ENV ( e.g SENGIRI_ENV= rails server )
+            EOM
+          end
+
+          confs_with_env
         end
 
         def shard_names
