@@ -15,6 +15,14 @@ module Sengiri
       @scope = scope
     end
 
+    def all
+      @shard_classes.map do |shard_class|
+        shard_class.all.scope.map do |shard_relation|
+          shard_relation.becomes(shard_class.superclass)
+        end
+      end.flatten
+    end
+
     def each(&block)
       if block_given?
         to_a.each(&block)
