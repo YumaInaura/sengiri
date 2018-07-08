@@ -39,10 +39,13 @@ Flexible sharding access for Ruby on Rails with ActiveRecord
 
 ## Sharding migration
 
-Move your migration file to sengiri db dir
+Put migration file to sengiri db dir
+
+example:
 
 ```bash
     mkdir -p db/sengiri/mygroup
+    rails generate migration CreateUser name:string
     mv db/migration/xxxx_create_user.rb db/sengiri/mygroup
 ```
 
