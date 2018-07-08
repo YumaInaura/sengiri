@@ -139,10 +139,6 @@ module Sengiri
           end
         end
 
-        def all
-          super.broadcast
-        end
-
         def broadcast
           Sengiri::BroadcastProxy.new(shard_classes, scope: current_scope)
         end
