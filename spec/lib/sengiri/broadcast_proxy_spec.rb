@@ -8,6 +8,21 @@ describe Sengiri::BroadcastProxy do
     shard2.create!(name: 'hugo')
   end
 
+  describe '#all' do
+    subject do
+      SengiriModel.broadcast.all
+    end
+
+    it 'should return broadcasted all records' do
+      expect(subject).to contain_exactly(
+         have_attributes(name: 'hoge'),
+         have_attributes(name: 'fuga'),
+         have_attributes(name: 'moge'),
+         have_attributes(name: 'hugo'),
+      ) 
+    end
+  end
+
   describe '#find_by' do
     subject do
       SengiriModel.broadcast.find_by(query)
