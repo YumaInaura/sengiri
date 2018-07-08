@@ -17,7 +17,7 @@ module Sengiri
 
     def all
       @shard_classes.map do |shard_class|
-        shard_class.all.scope.map do |shard_relation|
+        shard_class.all.map do |shard_relation|
           shard_relation.becomes(shard_class.superclass)
         end
       end.flatten
