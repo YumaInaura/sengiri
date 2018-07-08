@@ -80,7 +80,7 @@ Every shard.
 All records from all shards.
 
 ```ruby
-    all_records = User.all.broadcast
+    all_records = User.broadcast.all
 ```
 
 ## Transaction
