@@ -16,11 +16,18 @@ module Sengiri
     end
 
     def all
-      @shard_classes.map do |shard_class|
-        shard_class.all.map do |shard_relation|
-          shard_relation.becomes(shard_class.superclass)
+      @shard_classes.map { |shard_class|
+        Concurrent::Future.execute do
+          shard_class.connection_pool.with_connection do
+            shard_class.all.map do |instance|
+              instance.becomes(instance.class.superclass)
+            end
+          end
         end
-      end.flatten
+      }.each_with_object([]) { |future, values|
+        values << future.value
+        raise future.reason if future.rejected?
+      }.flatten
     end
 
     def each(&block)
